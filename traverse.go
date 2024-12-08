@@ -11,9 +11,6 @@ import (
 // 2. Determine "reachability" on the fly (can this word be found on this board)
 //    and do lookup in the total dictionary.
 
-// FIXME: this is totally broken for the `qu` ligature. Need a custom string ->
-// []string function that preserves `qu`.
-
 func (b board) AllWords(dict dictionary.Interface) dictionary.Map {
 	result := dictionary.Map{}
 	for _, idx := range allIndices() {
@@ -41,7 +38,7 @@ func (b board) hasStringAtDepthFirst(idx index, candidate string, vis visited) b
 	vis[idx] = true
 	defer delete(vis, idx)
 
-	head, tail := candidate[0], candidate[1:]
+	head, tail := headTail(candidate)
 	if b.get(idx) != string(head) {
 		return false
 	}
@@ -128,4 +125,12 @@ func (b board) wordsDepthFirst(
 
 func (b board) get(idx index) string {
 	return b.fields[idx[0]][idx[1]]
+}
+
+// headTail of s, treating `qu` as a single character.
+func headTail(s string) (string, string) {
+	if len(s) >= 2 && s[:2] == "qu" {
+		return s[:2], s[2:]
+	}
+	return string(s[0]), s[1:]
 }
