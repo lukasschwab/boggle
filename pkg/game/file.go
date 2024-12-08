@@ -4,10 +4,15 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/adrg/frontmatter"
 	"gopkg.in/yaml.v3"
+)
+
+const (
+	aboutThisFile = "https://github.com/lukasschwab/boggle"
 )
 
 // TODO: test with a temp path.
@@ -22,6 +27,8 @@ func WriteFile(path string, f Frontmatter, words []string) error {
 	if err := f.WriteTo(sink); err != nil {
 		return err
 	}
+
+	sort.Strings(words)
 	for _, word := range words {
 		sink.WriteString(fmt.Sprintf("%s\n", word))
 	}
@@ -33,9 +40,13 @@ func WriteFile(path string, f Frontmatter, words []string) error {
 }
 
 func LoadFile(path string) (f Frontmatter, words []string, err error) {
-	if file, err := os.Open(path); err != nil {
+	file, err := os.Open(path)
+	if err != nil {
 		return f, words, fmt.Errorf("error opening '%v': %w", path, err)
-	} else if rest, err := frontmatter.Parse(file, &f); err != nil {
+	}
+	defer file.Close()
+
+	if rest, err := frontmatter.Parse(file, &f); err != nil {
 		return f, words, fmt.Errorf("error parsing frontmatter%w", path, err)
 	} else {
 		trimmedRest := strings.TrimSpace(string(rest))
@@ -45,11 +56,14 @@ func LoadFile(path string) (f Frontmatter, words []string, err error) {
 
 type Frontmatter struct {
 	// Board, serialized; see [boggle.Deserialize].
-	Board        string
-	TimerSeconds int
+	Board         string
+	TimerSeconds  int
+	AboutThisFile string
 }
 
 func (f Frontmatter) WriteTo(sink *bufio.Writer) error {
+	f.AboutThisFile = aboutThisFile
+
 	sink.WriteString("---\n")
 	bytes, err := yaml.Marshal(f)
 	if err != nil {
