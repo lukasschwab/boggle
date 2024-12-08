@@ -3,20 +3,40 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"time"
 
+	"github.com/charmbracelet/log"
 	"github.com/lukasschwab/boggle/pkg/boggle"
 	"github.com/lukasschwab/boggle/pkg/dictionary"
 	"github.com/lukasschwab/boggle/pkg/game"
 )
 
-// TODO: parameterize a dictionary file (optional). Make a good one avail.
+const usage = `boggle - play an unsanctioned game of boggle.
+
+This game uses the Collins Scrabble Words 2019 dictionary, a three-minute timer,
+and requires words be at least four letters long.
+
+Each game outputs a .boggle file describing the board and your performance. You
+can replay a board by passing a .boggle file to this program:
+
+    $ boggle -file past-game.boggle
+
+Or by providing the "serialized" short-form description of the board, included
+in the YAML frontmatter of each .boggle file:
+
+    $ boggle -board Y3VkbnF1dG5kZHVybHllYXg=
+
+The following options are available:
+`
 
 func main() {
-	var filenameFlag = flag.String("f", "", ".boggle file to configure game")
-	var boardFlag = flag.String("b", "", "serialized board string")
+	var filenameFlag = flag.String("file", "", ".boggle file to configure game")
+	var boardFlag = flag.String("board", "", "serialized board string")
 	var boardUrlFlag = flag.String("url", "", "web URL of a public .boggle file to configure game")
+	flag.Usage = func() {
+		fmt.Println(usage)
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 
 	var err error
@@ -26,25 +46,25 @@ func main() {
 	if boardUrlFlag != nil && len(*boardUrlFlag) != 0 {
 		path, err := game.DownloadFile(*boardUrlFlag)
 		if err != nil {
-			panic(err)
+			log.Fatal(err.Error())
 		}
-		log.Printf("Downloaded %v", path)
+		log.Infof("Downloaded %v", path)
 		filenameFlag = &path
 	}
 
 	if filenameFlag != nil && len(*filenameFlag) != 0 {
 		frontmatter, _, err := game.LoadFile(*filenameFlag)
 		if err != nil {
-			panic(err)
+			log.Fatal(err.Error())
 		}
 		duration = time.Duration(frontmatter.TimerSeconds) * time.Second
 		if b, err = boggle.Deserialize(frontmatter.Board); err != nil {
-			panic(err)
+			log.Fatal(err.Error())
 		}
-		log.Printf("Loaded %v", *filenameFlag)
+		log.Infof("Loaded %v", *filenameFlag)
 	} else if boardFlag != nil && len(*boardFlag) != 0 {
 		if b, err = boggle.Deserialize(*boardFlag); err != nil {
-			panic(err)
+			log.Fatal(err.Error())
 		}
 	}
 
@@ -54,20 +74,21 @@ func main() {
 		Underlying: dictionary.EmptyTrie(),
 		Filter:     boggle.Playable,
 	}
-	if err := dictionary.LoadFromFile(dict); err != nil {
-		panic(err)
+	if err := dictionary.Load(dictionary.CSW19G, dict); err != nil {
+		log.Fatal(err.Error())
 	}
 
 	boardWordsDict := b.AllWords(dict)
 	words, err := game.Run(boardWordsDict, b, duration)
 	if err != nil {
-		panic(err)
+		log.Fatal(err.Error())
 	}
 
-	filename := fmt.Sprintf("./%s.boggle", b.Serialize())
+	// TODO: use timestamp for filename instead.
+	filename := fmt.Sprintf("./%s.boggle", time.Now().UTC().Format(time.RFC3339))
 	game.WriteFile(filename, game.Frontmatter{
 		Board:        b.Serialize(),
 		TimerSeconds: 180,
 	}, words)
-	log.Printf("Wrote %v", filename)
+	log.Infof("Wrote %v", filename)
 }
