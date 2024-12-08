@@ -47,7 +47,7 @@ func LoadFile(path string) (f Frontmatter, words []string, err error) {
 	defer file.Close()
 
 	if rest, err := frontmatter.Parse(file, &f); err != nil {
-		return f, words, fmt.Errorf("error parsing frontmatter%w", path, err)
+		return f, words, fmt.Errorf("error parsing frontmatter from '%v': %w", path, err)
 	} else {
 		trimmedRest := strings.TrimSpace(string(rest))
 		return f, strings.Split(trimmedRest, "\n"), nil

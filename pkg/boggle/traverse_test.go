@@ -8,12 +8,14 @@ import (
 )
 
 func TestTraverse(t *testing.T) {
-	// c  u  f  i
-	// u  e  h  l
-	// r  t  t  a
-	// d  i  b  i
-	b, err := Deserialize("YyB1IGYgaSB1IGUgaCBsIHIgdCB0IGEgZCBpIGIgaQ==")
-	assert.Nil(t, err)
+	b := Board{
+		fields: [4][4]string{
+			{"c", "u", "f", "i"},
+			{"u", "e", "h", "l"},
+			{"r", "t", "t", "a"},
+			{"d", "i", "b", "i"},
+		},
+	}
 
 	assert.True(t, b.ContainsString("curdibialifu"))
 	assert.True(t, b.ContainsString("cuurefihtditlabi"))
