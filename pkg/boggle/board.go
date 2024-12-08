@@ -41,32 +41,28 @@ func (b board) Serialize() string {
 	for _, row := range b.fields {
 		for _, cell := range row {
 			builder.WriteString(cell)
-			builder.WriteRune(serializedBoardSeparator)
 		}
 	}
-
-	// BODGE: drop the trailing separator.
 	built := builder.String()
-	bytes := []byte(built[:len(built)-1])
-	return base64.StdEncoding.EncodeToString(bytes)
+	return base64.StdEncoding.EncodeToString([]byte(built))
 }
 
-// TODO: test round-trip.
 func Deserialize(serialized string) (board, error) {
 	decoded, err := base64.StdEncoding.DecodeString(serialized)
 	if err != nil {
 		return board{}, fmt.Errorf("invalid serialized board: %w", err)
 	}
 
-	parts := strings.Split(string(decoded), string(serializedBoardSeparator))
-	if len(parts) != 16 {
-		return board{}, fmt.Errorf("unexpected number of fields %v in %v; expected 16", len(parts), parts)
-	}
-
+	decodedStr := string(decoded)
 	result := board{}
 	for r := 0; r < 4; r++ {
 		for c := 0; c < 4; c++ {
-			result.fields[r][c] = parts[indexToLinear(r, c)]
+			switch decodedStr[0] {
+			case 'q':
+				result.fields[r][c], decodedStr = decodedStr[:2], decodedStr[2:]
+			default:
+				result.fields[r][c], decodedStr = decodedStr[:1], decodedStr[1:]
+			}
 		}
 	}
 	return result, nil
