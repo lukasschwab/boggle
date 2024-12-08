@@ -11,11 +11,6 @@ const (
 	SystemDictionary = "/usr/share/dict/words"
 )
 
-// TODO: really belongs with game logic.
-func Playable(s string) bool {
-	return len(s) >= 4
-}
-
 type Interface interface {
 	Add(word string)
 	Contains(candidate string) bool
@@ -32,9 +27,7 @@ func LoadFromFile(dict Interface) error {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		normalized := strings.ToLower(scanner.Text())
-		if Playable(normalized) {
-			dict.Add(normalized)
-		}
+		dict.Add(normalized)
 	}
 	return nil
 }

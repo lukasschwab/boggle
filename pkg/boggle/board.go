@@ -1,11 +1,9 @@
-package main
+package boggle
 
 import (
 	"encoding/base64"
 	"fmt"
-	"math/rand"
 	"strings"
-	"time"
 )
 
 type board struct {
@@ -20,24 +18,7 @@ func indexToLinear(row, col int) int {
 	return row*4 + col
 }
 
-func randomBoard() board {
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(allDice), func(i, j int) {
-		allDice[i], allDice[j] = allDice[j], allDice[i]
-	})
-
-	fmt.Println(allDice)
-
-	result := board{}
-	for rowIdx, row := range result.fields {
-		for colIdx := range row {
-			result.fields[rowIdx][colIdx] = allDice[indexToLinear(rowIdx, colIdx)].roll()
-		}
-	}
-	return result
-}
-
-func (b board) pretty() string {
+func (b board) Pretty() string {
 	builder := new(strings.Builder)
 	for _, row := range b.fields {
 		for _, cell := range row {
@@ -55,7 +36,7 @@ func (b board) pretty() string {
 	return builder.String()
 }
 
-func (b board) serialize() string {
+func (b board) Serialize() string {
 	builder := new(strings.Builder)
 	for _, row := range b.fields {
 		for _, cell := range row {
@@ -71,7 +52,7 @@ func (b board) serialize() string {
 }
 
 // TODO: test round-trip.
-func deserialize(serialized string) (board, error) {
+func Deserialize(serialized string) (board, error) {
 	decoded, err := base64.StdEncoding.DecodeString(serialized)
 	if err != nil {
 		return board{}, fmt.Errorf("invalid serialized board: %w", err)

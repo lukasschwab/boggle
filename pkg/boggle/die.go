@@ -1,4 +1,4 @@
-package main
+package boggle
 
 import (
 	"math/rand"

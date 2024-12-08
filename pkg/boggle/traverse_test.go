@@ -1,4 +1,4 @@
-package main
+package boggle
 
 import (
 	"testing"
@@ -12,14 +12,14 @@ func TestTraverse(t *testing.T) {
 	// u  e  h  l
 	// r  t  t  a
 	// d  i  b  i
-	b, err := deserialize("YyB1IGYgaSB1IGUgaCBsIHIgdCB0IGEgZCBpIGIgaQ==")
+	b, err := Deserialize("YyB1IGYgaSB1IGUgaCBsIHIgdCB0IGEgZCBpIGIgaQ==")
 	assert.Nil(t, err)
 
 	assert.True(t, b.ContainsString("curdibialifu"))
 	assert.True(t, b.ContainsString("cuurefihtditlabi"))
 	assert.False(t, b.ContainsString("curdibialifx"))
 
-	t.Logf("Board:\n%v\n", b.pretty())
+	t.Logf("Board:\n%v\n", b.Pretty())
 
 	dict := dictionary.EmptyTrie()
 	assert.Nil(t, dictionary.LoadFromFile(dict))

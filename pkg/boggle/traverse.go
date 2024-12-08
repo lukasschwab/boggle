@@ -1,4 +1,4 @@
-package main
+package boggle
 
 import (
 	"github.com/lukasschwab/boggle/pkg/dictionary"
