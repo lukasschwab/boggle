@@ -85,11 +85,12 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	// TODO: use timestamp for filename instead.
 	filename := fmt.Sprintf("./%s.boggle", time.Now().UTC().Format(time.RFC3339))
-	game.WriteFile(filename, game.Frontmatter{
+	if err := game.WriteFile(filename, game.Frontmatter{
 		Board:        b.Serialize(),
 		TimerSeconds: 180,
-	}, words)
+	}, words); err != nil {
+		log.Fatal(err.Error())
+	}
 	log.Infof("Wrote %v", filename)
 }

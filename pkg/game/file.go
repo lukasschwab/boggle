@@ -30,7 +30,7 @@ func WriteFile(path string, f Frontmatter, words []string) error {
 
 	sort.Strings(words)
 	for _, word := range words {
-		sink.WriteString(fmt.Sprintf("%s\n", word))
+		sink.WriteString(fmt.Sprintf("%s\n", word)) //nolint:errcheck
 	}
 
 	if err := sink.Flush(); err != nil {
@@ -61,6 +61,7 @@ type Frontmatter struct {
 	AboutThisFile string
 }
 
+//nolint:errcheck
 func (f Frontmatter) WriteTo(sink *bufio.Writer) error {
 	f.AboutThisFile = aboutThisFile
 

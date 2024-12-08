@@ -2,7 +2,6 @@ package boggle
 
 import (
 	"math/rand"
-	"time"
 )
 
 func Playable(s string) bool {
@@ -10,7 +9,6 @@ func Playable(s string) bool {
 }
 
 func Shake() Board {
-	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(allDice), func(i, j int) {
 		allDice[i], allDice[j] = allDice[j], allDice[i]
 	})

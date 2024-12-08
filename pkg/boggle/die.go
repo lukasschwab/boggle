@@ -2,7 +2,6 @@ package boggle
 
 import (
 	"math/rand"
-	"time"
 )
 
 const (
@@ -13,7 +12,6 @@ const (
 type die [dieSides]string
 
 func (d die) roll() string {
-	rand.Seed(time.Now().UnixNano())
 	return d[rand.Intn(dieSides)]
 }
 
