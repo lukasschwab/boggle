@@ -10,6 +10,8 @@ $ go install github.com/lukasschwab/boggle@latest
 
 ## Usage
 
+See also `boggle --help`.
+
 ```
 boggle - play an unsanctioned game of boggle.
 

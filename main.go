@@ -27,6 +27,7 @@ in the YAML frontmatter of each .boggle file:
     $ boggle -board Y3VkbnF1dG5kZHVybHllYXg=
 
 The following options are available:
+
 `
 
 func main() {
@@ -34,7 +35,7 @@ func main() {
 	var boardFlag = flag.String("board", "", "serialized board string")
 	var boardUrlFlag = flag.String("url", "", "web URL of a public .boggle file to configure game")
 	flag.Usage = func() {
-		fmt.Println(usage)
+		fmt.Print(usage)
 		flag.PrintDefaults()
 	}
 	flag.Parse()
