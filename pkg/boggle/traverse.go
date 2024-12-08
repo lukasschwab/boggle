@@ -11,7 +11,7 @@ import (
 // 2. Determine "reachability" on the fly (can this word be found on this board)
 //    and do lookup in the total dictionary.
 
-func (b board) AllWords(dict dictionary.Interface) dictionary.Map {
+func (b Board) AllWords(dict dictionary.Interface) dictionary.Map {
 	result := dictionary.Map{}
 	for _, idx := range allIndices() {
 		for _, word := range b.words(dict, idx) {
@@ -23,7 +23,7 @@ func (b board) AllWords(dict dictionary.Interface) dictionary.Map {
 
 // ContainsString if candidate is reachable on b, regardless of any relationship
 // to a dictionary.
-func (b board) ContainsString(candidate string) bool {
+func (b Board) ContainsString(candidate string) bool {
 	for _, idx := range allIndices() {
 		if b.hasStringAtDepthFirst(idx, candidate, visited{}) {
 			return true
@@ -34,7 +34,7 @@ func (b board) ContainsString(candidate string) bool {
 
 // NOTE: closely resembles wordsDepthFirst, but with a different visitation
 // pattern and early escape. Don't think it's worth generalizing.
-func (b board) hasStringAtDepthFirst(idx index, candidate string, vis visited) bool {
+func (b Board) hasStringAtDepthFirst(idx index, candidate string, vis visited) bool {
 	vis[idx] = true
 	defer delete(vis, idx)
 
@@ -93,11 +93,11 @@ func (i index) valid() bool {
 type visited map[index]bool
 
 // words rooted at a given index.
-func (b board) words(dict dictionary.Interface, start index) []string {
+func (b Board) words(dict dictionary.Interface, start index) []string {
 	return b.wordsDepthFirst(dict, start, visited{}, "")
 }
 
-func (b board) wordsDepthFirst(
+func (b Board) wordsDepthFirst(
 	dict dictionary.Interface,
 	idx index,
 	vis visited,
@@ -123,13 +123,13 @@ func (b board) wordsDepthFirst(
 	return result
 }
 
-func (b board) get(idx index) string {
+func (b Board) get(idx index) string {
 	return b.fields[idx[0]][idx[1]]
 }
 
 // headTail of s, treating `qu` as a single character.
 func headTail(s string) (string, string) {
-	if len(s) >= 2 && s[:2] == "qu" {
+	if len(s) >= 2 && s[:2] == quLigature {
 		return s[:2], s[2:]
 	}
 	return string(s[0]), s[1:]

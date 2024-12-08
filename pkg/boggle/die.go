@@ -6,7 +6,8 @@ import (
 )
 
 const (
-	dieSides = 6
+	dieSides   = 6
+	quLigature = "qu"
 )
 
 type die [dieSides]string
@@ -26,7 +27,7 @@ var (
 	die5  = die{"l", "u", "p", "e", "t", "s"}
 	die6  = die{"a", "c", "i", "t", "o", "a"}
 	die7  = die{"y", "l", "g", "k", "u", "e"}
-	die8  = die{"qu", "b", "m", "j", "o", "a"}
+	die8  = die{quLigature, "b", "m", "j", "o", "a"}
 	die9  = die{"e", "h", "i", "s", "p", "n"}
 	die10 = die{"v", "e", "t", "i", "g", "n"}
 	die11 = die{"b", "a", "l", "i", "y", "t"}

@@ -6,27 +6,22 @@ import (
 	"strings"
 )
 
-type board struct {
+type Board struct {
 	fields [4][4]string
 }
-
-const (
-	serializedBoardSeparator = ' '
-)
 
 func indexToLinear(row, col int) int {
 	return row*4 + col
 }
 
-func (b board) Pretty() string {
+func (b Board) Pretty() string {
 	builder := new(strings.Builder)
 	for _, row := range b.fields {
 		for _, cell := range row {
 			builder.WriteString(cell)
-			switch len(cell) {
-			case 2:
-				builder.WriteRune(' ')
-			default:
+			if cell == quLigature {
+				builder.WriteString(" ")
+			} else {
 				builder.WriteString("  ")
 			}
 		}
@@ -36,7 +31,7 @@ func (b board) Pretty() string {
 	return builder.String()
 }
 
-func (b board) Serialize() string {
+func (b Board) Serialize() string {
 	builder := new(strings.Builder)
 	for _, row := range b.fields {
 		for _, cell := range row {
@@ -47,14 +42,14 @@ func (b board) Serialize() string {
 	return base64.StdEncoding.EncodeToString([]byte(built))
 }
 
-func Deserialize(serialized string) (board, error) {
+func Deserialize(serialized string) (Board, error) {
 	decoded, err := base64.StdEncoding.DecodeString(serialized)
 	if err != nil {
-		return board{}, fmt.Errorf("invalid serialized board: %w", err)
+		return Board{}, fmt.Errorf("invalid serialized board: %w", err)
 	}
 
 	decodedStr := string(decoded)
-	result := board{}
+	result := Board{}
 	for r := 0; r < 4; r++ {
 		for c := 0; c < 4; c++ {
 			switch decodedStr[0] {

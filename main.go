@@ -13,13 +13,14 @@ import (
 
 // TODO: introduce a time limit.
 // TODO: parameterize a dictionary file (optional). Make a good one avail.
+// TODO: test in CI.
 
 func main() {
 	b := boggle.Shake()
-	fmt.Println(b.Pretty())
 
 	serialized := b.Serialize()
 	fmt.Println(serialized)
+	fmt.Println(b.Pretty())
 
 	after, err := boggle.Deserialize(serialized)
 	if err != nil {

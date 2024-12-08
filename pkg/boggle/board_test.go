@@ -9,7 +9,7 @@ import (
 func TestNewSerialize(t *testing.T) {
 	board := Shake()
 	// Cover the complex case: 'qu' ligature.
-	board.fields[0][0] = "qu"
+	board.fields[0][0] = quLigature
 
 	serialized := board.Serialize()
 	deserialized, err := Deserialize(serialized)
