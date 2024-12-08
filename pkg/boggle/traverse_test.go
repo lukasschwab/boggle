@@ -21,10 +21,8 @@ func TestTraverse(t *testing.T) {
 	assert.True(t, b.ContainsString("cuurefihtditlabi"))
 	assert.False(t, b.ContainsString("curdibialifx"))
 
-	t.Logf("Board:\n%v\n", b.Pretty())
-
 	dict := dictionary.EmptyTrie()
-	assert.Nil(t, dictionary.LoadFromFile(dict))
+	assert.Nil(t, dictionary.Load(dictionary.SystemDictionary, dict))
 	assert.True(t, dict.Contains("cute"))
 
 	words := b.words(dict, index{0, 0})
