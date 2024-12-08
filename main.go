@@ -11,9 +11,7 @@ import (
 	"github.com/lukasschwab/boggle/pkg/game"
 )
 
-// TODO: introduce a time limit.
 // TODO: parameterize a dictionary file (optional). Make a good one avail.
-// TODO: test in CI.
 
 func main() {
 	var filenameFlag = flag.String("f", "", ".boggle file to configure game")
@@ -49,13 +47,6 @@ func main() {
 			panic(err)
 		}
 	}
-	// else if boardUrlFlag != nil && len(*boardUrlFlag) != 0 {
-	// 	if f, _, err := game.DownloadFile(*boardUrlFlag); err != nil {
-	// 		panic(err)
-	// 	} else if b, err = boggle.Deserialize(f.Board); err != nil {
-	// 		panic(err)
-	// 	}
-	// }
 
 	// Loading a trie makes the b.AllWords operation faster: prefix-based
 	// exclusion.
