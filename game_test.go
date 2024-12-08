@@ -15,6 +15,10 @@ func TestTraverse(t *testing.T) {
 	b, err := deserialize("YyB1IGYgaSB1IGUgaCBsIHIgdCB0IGEgZCBpIGIgaQ==")
 	assert.Nil(t, err)
 
+	assert.True(t, b.ContainsString("curdibialifu"))
+	assert.True(t, b.ContainsString("cuurefihtditlabi"))
+	assert.False(t, b.ContainsString("curdibialifx"))
+
 	t.Logf("Board:\n%v\n", b.pretty())
 
 	dict := dictionary.EmptyTrie()

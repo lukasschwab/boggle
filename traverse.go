@@ -11,6 +11,9 @@ import (
 // 2. Determine "reachability" on the fly (can this word be found on this board)
 //    and do lookup in the total dictionary.
 
+// FIXME: this is totally broken for the `qu` ligature. Need a custom string ->
+// []string function that preserves `qu`.
+
 func (b board) AllWords(dict dictionary.Interface) dictionary.Map {
 	result := dictionary.Map{}
 	for _, idx := range allIndices() {
@@ -19,6 +22,39 @@ func (b board) AllWords(dict dictionary.Interface) dictionary.Map {
 		}
 	}
 	return result
+}
+
+// ContainsString if candidate is reachable on b, regardless of any relationship
+// to a dictionary.
+func (b board) ContainsString(candidate string) bool {
+	for _, idx := range allIndices() {
+		if b.hasStringAtDepthFirst(idx, candidate, visited{}) {
+			return true
+		}
+	}
+	return false
+}
+
+// NOTE: closely resembles wordsDepthFirst, but with a different visitation
+// pattern and early escape. Don't think it's worth generalizing.
+func (b board) hasStringAtDepthFirst(idx index, candidate string, vis visited) bool {
+	vis[idx] = true
+	defer delete(vis, idx)
+
+	head, tail := candidate[0], candidate[1:]
+	if b.get(idx) != string(head) {
+		return false
+	}
+	if tail == "" {
+		return true
+	}
+
+	for _, n := range idx.neighbors() {
+		if _, visited := vis[n]; !visited && b.hasStringAtDepthFirst(n, tail, vis) {
+			return true
+		}
+	}
+	return false
 }
 
 // allIndices for a 4x4 game.
@@ -70,7 +106,6 @@ func (b board) wordsDepthFirst(
 	vis visited,
 	soFar string,
 ) []string {
-	// Add self to visited.
 	vis[idx] = true
 	defer delete(vis, idx)
 	soFar = soFar + b.get(idx)
