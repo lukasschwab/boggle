@@ -22,3 +22,7 @@ func (d Map) Members() []string {
 	}
 	return result
 }
+
+func (d Map) Size() int {
+	return len(d)
+}
