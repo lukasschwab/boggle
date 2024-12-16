@@ -1,6 +1,9 @@
 package main
 
-import "github.com/lukasschwab/boggle/pkg/boggle"
+import (
+	"github.com/lukasschwab/boggle/pkg/boggle"
+	"github.com/lukasschwab/boggle/pkg/counter"
+)
 
 var (
 	DieCounts = dieCounts()
@@ -13,27 +16,8 @@ func histogramPlayable(word string) bool {
 	return toCounts(word).LessThan(DieCounts)
 }
 
-type letterCounts map[string]int
-
-func (lc letterCounts) Incr(head string) {
-	if _, ok := lc[head]; !ok {
-		lc[head] = 0
-	}
-	lc[head]++
-}
-
-func (lc letterCounts) LessThan(other letterCounts) bool {
-	for letter, count := range lc {
-		otherCount, ok := other[letter]
-		if !ok || count > otherCount {
-			return false
-		}
-	}
-	return true
-}
-
-func toCounts(word string) letterCounts {
-	lc := letterCounts{}
+func toCounts(word string) counter.Counter {
+	lc := counter.Counter{}
 
 	for len(word) > 0 {
 		var head string
@@ -44,8 +28,8 @@ func toCounts(word string) letterCounts {
 	return lc
 }
 
-func dieCounts() letterCounts {
-	counts := letterCounts{}
+func dieCounts() counter.Counter {
+	counts := counter.Counter{}
 	for _, d := range boggle.ClassicDice {
 		for _, side := range d.Sides() {
 			counts.Incr(side)
