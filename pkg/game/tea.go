@@ -33,6 +33,7 @@ type model struct {
 	keymap   keymap
 	help     help.Model
 	timer    timer.Model
+	style    Style
 }
 
 type keymap struct {
@@ -55,14 +56,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 
 	case timer.TimeoutMsg:
-		m.quitting = true
-		return m, tea.Quit
+		return m.quit()
 
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.keymap.quit):
-			m.quitting = true
-			return m, tea.Quit
+			return m.quit()
 		case key.Matches(msg, m.keymap.submit):
 			return m.handleSubmission(), nil
 		}
@@ -71,6 +70,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	m.userInput, cmd = m.userInput.Update(msg)
 	return m, cmd
+}
+
+func (m model) quit() (tea.Model, tea.Cmd) {
+	m.quitting = true
+	return m, tea.Quit
 }
 
 func (m model) handleSubmission() model {
@@ -97,16 +101,16 @@ func (m model) handleSubmission() model {
 func (m model) View() string {
 	builder := new(strings.Builder)
 
-	scoreView := fmt.Sprintf("%d", len(m.scoredWords)) + blurredStyle.Render(fmt.Sprintf("/%d", m.totalWordCount))
-	timerView := timerStyle(m.timer).Render(m.timer.View())
-	serializedBoardView := blurredStyle.Render(m.Board.Serialize())
-	builder.WriteString(strings.Join([]string{scoreView, timerView, serializedBoardView}, blurredStyle.Render(" • ")))
+	scoreView := fmt.Sprintf("%d", len(m.scoredWords)) + m.style.blurredStyle.Render(fmt.Sprintf("/%d", m.totalWordCount))
+	timerView := m.style.timerStyle(m.timer).Render(m.timer.View())
+	serializedBoardView := m.style.blurredStyle.Render(m.Board.Serialize())
+	builder.WriteString(strings.Join([]string{scoreView, timerView, serializedBoardView}, m.style.blurredStyle.Render(" • ")))
 	builder.WriteRune('\n')
 
 	builder.WriteString(lipgloss.JoinHorizontal(
 		lipgloss.Bottom,
-		boardStyle.Render(strings.TrimSpace(m.Board.Pretty())),
-		historyStyle.Render(m.history.view()),
+		m.style.boardStyle.Render(strings.TrimSpace(m.Board.Pretty())),
+		m.style.historyStyle.Render(m.history.view(m.style)),
 	) + "\n")
 
 	if !m.quitting {
@@ -131,15 +135,34 @@ func Run(
 	board boggle.Board,
 	duration time.Duration,
 ) ([]string, error) {
+	final, err := tea.NewProgram(Model(dict, board, duration, DefaultStyle)).Run()
+
+	if err != nil {
+		return []string{}, fmt.Errorf("error running game: %w", err)
+	}
+
+	finalModel := final.(model)
+	scoredWords := make([]string, 0, len(finalModel.scoredWords))
+	for word, _ := range finalModel.scoredWords {
+		scoredWords = append(scoredWords, word)
+	}
+	return scoredWords, nil
+}
+
+func Model(
+	dict dictionary.Map,
+	board boggle.Board,
+	duration time.Duration,
+	style Style,
+) tea.Model {
 	ti := textinput.New()
 	ti.Focus()
-	ti.PromptStyle = promptStyle
+	ti.PromptStyle = style.promptStyle
 
-	final, err := tea.NewProgram(model{
+	return model{
 		Dict:           dict,
 		Board:          board,
 		totalWordCount: len(dict.Members()),
-
 		keymap: keymap{
 			quit: key.NewBinding(
 				key.WithKeys("ctrl+c", "esc"),
@@ -154,16 +177,6 @@ func Run(
 		timer:       timer.New(duration),
 		userInput:   ti,
 		help:        help.New(),
-	}).Run()
-
-	if err != nil {
-		return []string{}, fmt.Errorf("error running game: %w", err)
+		style:       style,
 	}
-
-	finalModel := final.(model)
-	scoredWords := make([]string, 0, len(finalModel.scoredWords))
-	for word, _ := range finalModel.scoredWords {
-		scoredWords = append(scoredWords, word)
-	}
-	return scoredWords, nil
 }
