@@ -11,10 +11,10 @@ func (h history) append(ew entry) history {
 	return append(h, ew)
 }
 
-func (h history) view() string {
+func (h history) view(s Style) string {
 	styled := make([]string, len(h))
 	for i := range h {
-		styled[i] = enteredWordStyles[h[i].outcome].Render(h[i].word)
+		styled[i] = s.enteredWordStyles[h[i].outcome].Render(h[i].word)
 	}
 	return strings.Join(styled, "\n")
 }
