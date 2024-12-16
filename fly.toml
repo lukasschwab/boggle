@@ -1,0 +1,30 @@
+# fly.toml app configuration file generated for boggle on 2024-12-15T21:12:15-08:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'boggle'
+primary_region = 'sjc'
+
+[build]
+  [build.args]
+    GO_VERSION = '1.23'
+
+[[services]]
+  internal_port = 23234
+  protocol = "tcp"
+  auto_stop_machines = true
+  auto_start_machines = true
+  [[services.ports]]
+    port = 22
+
+[env]
+  SSH_KEY_PATH = "/data/boggle_ed25519"
+
+[[vm]]
+  size = 'shared-cpu-1x'
+
+[mounts]
+  source = "ssh_key"
+  destination = "/data"
+

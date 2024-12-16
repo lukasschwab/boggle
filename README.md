@@ -2,6 +2,8 @@
 
 A TUI game of single-player boggle inspired by [wordshake.com/boggle](https://wordshake.com/boggle).
 
+Play a hosted game: `ssh boggle.fly.dev`.
+
 ## Installation
 
 ```console
