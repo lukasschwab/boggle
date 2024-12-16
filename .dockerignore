@@ -1,0 +1,6 @@
+# flyctl launch added from .gitignore
+**/*.boggle
+**/.ssh
+# Experimental outputs.
+**/data
+fly.toml
