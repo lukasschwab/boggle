@@ -38,7 +38,7 @@ func (b Board) hasStringAtDepthFirst(idx index, candidate string, vis visited) b
 	vis[idx] = true
 	defer delete(vis, idx)
 
-	head, tail := headTail(candidate)
+	head, tail := HeadTail(candidate)
 	if b.get(idx) != string(head) {
 		return false
 	}
@@ -127,8 +127,8 @@ func (b Board) get(idx index) string {
 	return b.fields[idx[0]][idx[1]]
 }
 
-// headTail of s, treating `qu` as a single character.
-func headTail(s string) (string, string) {
+// HeadTail of s, treating `qu` as a single character.
+func HeadTail(s string) (string, string) {
 	if len(s) >= 2 && s[:2] == quLigature {
 		return s[:2], s[2:]
 	}

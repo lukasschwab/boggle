@@ -6,6 +6,8 @@ import (
 
 type Die interface {
 	roll() string
+	Contains(string) bool
+	Sides() [dieSides]string
 }
 
 const (
@@ -19,10 +21,26 @@ func (d die) roll() string {
 	return d[rand.Intn(dieSides)]
 }
 
+func (d die) Contains(head string) bool {
+	for _, side := range d {
+		if side == head {
+			return true
+		}
+	}
+	return false
+}
+
+func (d die) Sides() [dieSides]string {
+	return d
+}
+
 // "Classic" scrabble dice. See
 // - https://boardgames.stackexchange.com/questions/29264/boggle-what-is-the-dice-configuration-for-boggle-in-various-languages
 // - https://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html
 var (
+	// NilDie is a special die for experiments
+	NilDie = die{}
+
 	die0  = die{"r", "i", "f", "o", "b", "x"}
 	die1  = die{"i", "f", "e", "h", "e", "y"}
 	die2  = die{"d", "e", "n", "o", "w", "s"}
@@ -49,6 +67,14 @@ type newDie die
 
 func (d newDie) roll() string {
 	return die(d).roll()
+}
+
+func (d newDie) Contains(head string) bool {
+	return die(d).Contains(head)
+}
+
+func (d newDie) Sides() [dieSides]string {
+	return die(d).Sides()
 }
 
 // "New" scrabble dice. See https://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html

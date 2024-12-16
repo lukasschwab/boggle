@@ -5,7 +5,7 @@ import (
 )
 
 func Playable(s string) bool {
-	return len(s) >= 4
+	return len(s) >= 4 && len(s) <= 16
 }
 
 func Shake(dice [16]Die) Board {
