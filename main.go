@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/charmbracelet/log"
@@ -34,6 +35,8 @@ func main() {
 	var filenameFlag = flag.String("file", "", ".boggle file to configure game")
 	var boardFlag = flag.String("board", "", "serialized board string")
 	var boardUrlFlag = flag.String("url", "", "web URL of a public .boggle file to configure game")
+	var solveFlag = flag.Bool("solve", false, "print all possible words on board after game")
+	var skipFlag = flag.Bool("skip", false, "skip interactive game")
 	flag.Usage = func() {
 		fmt.Print(usage)
 		flag.PrintDefaults()
@@ -80,17 +83,29 @@ func main() {
 	}
 
 	boardWordsDict := b.AllWords(dict)
-	words, err := game.Run(boardWordsDict, b, duration)
-	if err != nil {
-		log.Fatal(err.Error())
+
+	// Game loop.
+	if !*skipFlag {
+		words, err := game.Run(boardWordsDict, b, duration)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+
+		filename := fmt.Sprintf("./%s.boggle", time.Now().UTC().Format(time.RFC3339))
+		if err := game.WriteFile(filename, game.Frontmatter{
+			Board:        b.Serialize(),
+			TimerSeconds: 180,
+		}, words); err != nil {
+			log.Fatal(err.Error())
+		}
+		log.Infof("Wrote %v", filename)
 	}
 
-	filename := fmt.Sprintf("./%s.boggle", time.Now().UTC().Format(time.RFC3339))
-	if err := game.WriteFile(filename, game.Frontmatter{
-		Board:        b.Serialize(),
-		TimerSeconds: 180,
-	}, words); err != nil {
-		log.Fatal(err.Error())
+	if *solveFlag {
+		allAvailableWords := boardWordsDict.Members()
+		sort.Strings(allAvailableWords)
+		for _, word := range allAvailableWords {
+			fmt.Println(word)
+		}
 	}
-	log.Infof("Wrote %v", filename)
 }
