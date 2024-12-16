@@ -8,8 +8,6 @@ import (
 	"github.com/lukasschwab/boggle/pkg/dictionary"
 )
 
-// NOTE: simulated annealing performs much better here. See some prior art:
-// https://www.danvk.org/wp/2009-02-19/sky-high-boggle-scores-with-simulated-annealing/index.html
 func main() {
 	dict := dictionary.Filtered{
 		Underlying: dictionary.EmptyTrie(),
@@ -19,9 +17,20 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	for _ = range 10_000 {
-		b := boggle.Shake(boggle.ClassicDice)
+	var bestBoard boggle.Board
+	var bestBoardCount = 0
+
+	for _ = range 100_000 {
+		b := boggle.Shake()
 		boardWordsDict := b.AllWords(dict)
-		fmt.Println(boardWordsDict.Size())
+		// fmt.Println(boardWordsDict.Size())
+
+		if boardWordsDict.Size() > bestBoardCount {
+			bestBoardCount = boardWordsDict.Size()
+			bestBoard = b
+		}
 	}
+
+	fmt.Printf("%d words\n", bestBoardCount)
+	fmt.Println(bestBoard.Pretty())
 }
