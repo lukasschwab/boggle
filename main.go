@@ -37,14 +37,21 @@ func main() {
 	var boardUrlFlag = flag.String("url", "", "web URL of a public .boggle file to configure game")
 	var solveFlag = flag.Bool("solve", false, "print all possible words on board after game")
 	var skipFlag = flag.Bool("skip", false, "skip interactive game")
+	var newFlag = flag.Bool("new", false, "use the \"New\" Boggle dice set (since 2008).\nSee: https://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html")
+
 	flag.Usage = func() {
 		fmt.Print(usage)
 		flag.PrintDefaults()
 	}
 	flag.Parse()
 
+	dice := boggle.ClassicDice
+	if *newFlag {
+		dice = boggle.NewDice
+	}
+
 	var err error
-	b := boggle.Shake(boggle.ClassicDice)
+	b := boggle.Shake(dice)
 	duration := 3 * time.Minute
 
 	if boardUrlFlag != nil && len(*boardUrlFlag) != 0 {

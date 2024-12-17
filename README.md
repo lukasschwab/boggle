@@ -33,13 +33,16 @@ in the YAML frontmatter of each .boggle file:
 The following options are available:
 
   -board string
-    	serialized board string
+        serialized board string
   -file string
-    	.boggle file to configure game
+        .boggle file to configure game
+  -new
+        use the "New" Boggle dice set (since 2008).
+        See: https://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html
   -skip
-    	skip interactive game
+        skip interactive game
   -solve
-    	print all possible words on board after game
+        print all possible words on board after game
   -url string
-    	web URL of a public .boggle file to configure game
+        web URL of a public .boggle file to configure game
 ```
