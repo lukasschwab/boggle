@@ -44,7 +44,7 @@ func main() {
 	flag.Parse()
 
 	var err error
-	b := boggle.Shake()
+	b := boggle.Shake(boggle.ClassicDice)
 	duration := 3 * time.Minute
 
 	if boardUrlFlag != nil && len(*boardUrlFlag) != 0 {

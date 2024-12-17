@@ -69,7 +69,7 @@ func main() {
 func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 	style := game.NewStyle(bubbletea.MakeRenderer(s))
 
-	board := boggle.Shake()
+	board := boggle.Shake(boggle.ClassicDice)
 	duration := 3 * time.Minute
 
 	baseDict := dictionary.Filtered{

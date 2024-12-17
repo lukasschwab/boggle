@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewSerialize(t *testing.T) {
-	board := Shake()
+	board := Shake(ClassicDice)
 	// Cover the complex case: 'qu' ligature.
 	board.fields[0][0] = quLigature
 
