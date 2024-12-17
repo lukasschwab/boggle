@@ -22,7 +22,7 @@ func main() {
 	wordCounter := counter.Counter{}
 
 	for range 10_000 {
-		b := boggle.Shake()
+		b := boggle.Shake(boggle.ClassicDice)
 		boardWordsDict := b.AllWords(dict)
 
 		for _, word := range boardWordsDict.Members() {
