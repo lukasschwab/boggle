@@ -85,7 +85,7 @@ func main() {
 		Underlying: dictionary.EmptyTrie(),
 		Filter:     boggle.Playable,
 	}
-	if err := dictionary.Load(dictionary.CSW19G, dict); err != nil {
+	if err := dictionary.Load(dictionary.CSW19, dict); err != nil {
 		log.Fatal(err.Error())
 	}
 

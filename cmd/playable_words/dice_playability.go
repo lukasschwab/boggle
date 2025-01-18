@@ -2,9 +2,10 @@ package main
 
 import "github.com/lukasschwab/boggle/pkg/boggle"
 
-// dicePlayable filter respects dice constraints
-func dicePlayable(word string) bool {
-	return dicePlayableTail(word, boggle.ClassicDice[:])
+func dicePlayableFilter(dice [16]boggle.Die) func(string) bool {
+	return func(word string) bool {
+		return dicePlayableTail(word, dice[:])
+	}
 }
 
 func dicePlayableTail(subword string, diceLeft []boggle.Die) bool {

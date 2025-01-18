@@ -22,7 +22,7 @@ func TestTraverse(t *testing.T) {
 	assert.False(t, b.ContainsString("curdibialifx"))
 
 	dict := dictionary.EmptyTrie()
-	assert.Nil(t, dictionary.Load(dictionary.CSW19G, dict))
+	assert.Nil(t, dictionary.Load(dictionary.CSW19, dict))
 	assert.True(t, dict.Contains("cute"))
 
 	words := b.words(dict, index{0, 0})

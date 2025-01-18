@@ -17,7 +17,7 @@ const (
 
 type Source func() (io.ReadCloser, error)
 
-func CSW19G() (io.ReadCloser, error) {
+func CSW19() (io.ReadCloser, error) {
 	return embedFilesystem.Open(csw19Path)
 }
 

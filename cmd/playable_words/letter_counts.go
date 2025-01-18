@@ -5,15 +5,11 @@ import (
 	"github.com/lukasschwab/boggle/pkg/counter"
 )
 
-var (
-	DieCounts = dieCounts()
-)
-
-// histogramPlayable returns true if word is playable by letter counts, i.e. each
-// letter in word occurs at least as many times on the Boggle die. Disregards
-// inter-letter constraints: "quj" is histogramPlayable.
-func histogramPlayable(word string) bool {
-	return toCounts(word).LessThan(DieCounts)
+func histogramPlayableFilter(dice [16]boggle.Die) func(string) bool {
+	counts := dieCounts(dice)
+	return func(word string) bool {
+		return toCounts(word).LessThan(counts)
+	}
 }
 
 func toCounts(word string) counter.Counter {
@@ -28,9 +24,9 @@ func toCounts(word string) counter.Counter {
 	return lc
 }
 
-func dieCounts() counter.Counter {
+func dieCounts(dice [16]boggle.Die) counter.Counter {
 	counts := counter.Counter{}
-	for _, d := range boggle.ClassicDice {
+	for _, d := range dice {
 		for _, side := range d.Sides() {
 			counts.Incr(side)
 		}

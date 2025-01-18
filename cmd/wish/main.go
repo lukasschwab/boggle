@@ -76,7 +76,7 @@ func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 		Underlying: dictionary.EmptyTrie(),
 		Filter:     boggle.Playable,
 	}
-	if err := dictionary.Load(dictionary.CSW19G, baseDict); err != nil {
+	if err := dictionary.Load(dictionary.CSW19, baseDict); err != nil {
 		log.Fatal(err.Error())
 	}
 	boardDict := board.AllWords(baseDict)
