@@ -21,7 +21,7 @@ func WriteFile(path string, f Frontmatter, words []string) error {
 	if err != nil {
 		return fmt.Errorf("error opening '%v': %w", path, err)
 	}
-	defer file.Close()
+	defer file.Close() //nolint:errcheck
 
 	sink := bufio.NewWriter(file)
 	if err := f.WriteTo(sink); err != nil {
@@ -30,7 +30,7 @@ func WriteFile(path string, f Frontmatter, words []string) error {
 
 	sort.Strings(words)
 	for _, word := range words {
-		sink.WriteString(fmt.Sprintf("%s\n", word)) //nolint:errcheck
+		fmt.Fprintf(sink, "%s\n", word) //nolint:errcheck
 	}
 
 	if err := sink.Flush(); err != nil {
@@ -44,7 +44,7 @@ func LoadFile(path string) (f Frontmatter, words []string, err error) {
 	if err != nil {
 		return f, words, fmt.Errorf("error opening '%v': %w", path, err)
 	}
-	defer file.Close()
+	defer file.Close() //nolint:errcheck
 
 	if rest, err := frontmatter.Parse(file, &f); err != nil {
 		return f, words, fmt.Errorf("error parsing frontmatter from '%v': %w", path, err)

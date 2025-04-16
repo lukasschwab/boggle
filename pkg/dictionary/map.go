@@ -17,7 +17,7 @@ func (d Map) CanBePrefix(pre string) bool {
 
 func (d Map) Members() []string {
 	result := make([]string, 0, len(d))
-	for word, _ := range d {
+	for word := range d {
 		result = append(result, word)
 	}
 	return result

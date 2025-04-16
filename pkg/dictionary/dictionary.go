@@ -17,7 +17,7 @@ func Load(source Source, dict Interface) error {
 	if err != nil {
 		return fmt.Errorf("error opening dictionary: %w", err)
 	}
-	defer reader.Close()
+	defer reader.Close() //nolint:errcheck
 
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
