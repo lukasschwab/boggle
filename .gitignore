@@ -1,4 +1,5 @@
 *.boggle
 .ssh
+.vscode
 # Experimental outputs.
 data

@@ -12,13 +12,13 @@ func DownloadFile(url string) (path string, err error) {
 	if err != nil {
 		return "", fmt.Errorf("error creating temp file: %w", err)
 	}
-	defer file.Close()
+	defer file.Close() //nolint:errcheck
 
 	resp, err := http.Get(url)
 	if err != nil {
 		return file.Name(), fmt.Errorf("http error: %w", err)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	if _, err := io.Copy(file, resp.Body); err != nil {
 		return file.Name(), fmt.Errorf("error downloading file: %w", err)
