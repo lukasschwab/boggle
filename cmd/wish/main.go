@@ -47,22 +47,49 @@ func main() {
 		log.Error("Could not start server", "error", err)
 	}
 
-	done := make(chan os.Signal, 1)
-	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-	log.Info("Starting SSH server", "host", host, "port", port)
+	// Create channels to differentiate shutdown reasons
+	signalChan := make(chan os.Signal, 1)
+	errorChan := make(chan error, 1)
+
+	// Set up signal handling with detailed logging
+	signal.Notify(signalChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	log.Info("Starting SSH server", "host", host, "port", port, "pid", os.Getpid())
+
+	// Start server in goroutine
 	go func() {
-		if err = s.ListenAndServe(); err != nil && !errors.Is(err, ssh.ErrServerClosed) {
-			log.Error("Could not start server", "error", err)
-			done <- nil
+		if err := s.ListenAndServe(); err != nil && !errors.Is(err, ssh.ErrServerClosed) {
+			log.Error("SSH server error", "error", err)
+			errorChan <- err
+		} else {
+			log.Debug("SSH server ListenAndServe completed normally")
+			errorChan <- nil
 		}
 	}()
 
-	<-done
-	log.Info("Stopping SSH server")
+	// Wait for shutdown signal or server error
+	var shutdownReason string
+	select {
+	case sig := <-signalChan:
+		shutdownReason = "signal"
+		log.Info("Received shutdown signal", "signal", sig.String(), "pid", os.Getpid())
+	case err := <-errorChan:
+		if err != nil {
+			shutdownReason = "server-error"
+			log.Error("Shutting down due to server error", "error", err)
+		} else {
+			shutdownReason = "server-completed"
+			log.Info("Server completed normally")
+		}
+	}
+
+	log.Info("Stopping SSH server", "reason", shutdownReason, "pid", os.Getpid())
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer func() { cancel() }()
 	if err := s.Shutdown(ctx); err != nil && !errors.Is(err, ssh.ErrServerClosed) {
 		log.Error("Could not stop server", "error", err)
+	} else {
+		log.Info("SSH server stopped successfully")
 	}
 }
 
