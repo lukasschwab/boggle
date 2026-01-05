@@ -16,8 +16,6 @@ import (
 	"github.com/charmbracelet/wish/activeterm"
 	"github.com/charmbracelet/wish/bubbletea"
 	"github.com/charmbracelet/wish/logging"
-	"github.com/lukasschwab/boggle/pkg/boggle"
-	"github.com/lukasschwab/boggle/pkg/dictionary"
 	"github.com/lukasschwab/boggle/pkg/game"
 )
 
@@ -96,20 +94,6 @@ func main() {
 func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 	style := game.NewStyle(bubbletea.MakeRenderer(s))
 
-	board := boggle.Shake(boggle.ClassicDice)
-	duration := 3 * time.Minute
-
-	baseDict := dictionary.Filtered{
-		Underlying: dictionary.EmptyTrie(),
-		Filter:     boggle.Playable,
-	}
-	if err := dictionary.Load(dictionary.CSW19G, baseDict); err != nil {
-		log.Fatal(err.Error())
-	}
-	boardDict := board.AllWords(baseDict)
-
-	// TODO: figure out how to output the game file. Probably means refactoring
-	// tea.go so the model optionally renders the file contents in view;
-	// basically, Run should become a pretty empty shell.
-	return game.Model(boardDict, board, duration, style), []tea.ProgramOption{}
+       // Create the new multiplayer app model instead of single-player game
+       return game.NewAppModel(s, style), []tea.ProgramOption{}
 }
