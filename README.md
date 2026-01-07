@@ -20,8 +20,7 @@ boggle - play an unsanctioned game of boggle.
 This game uses the Collins Scrabble Words 2019 dictionary, a three-minute timer,
 and requires words be at least four letters long.
 
-Each game outputs a .boggle file describing the board and your performance. You
-can replay a board by passing a .boggle file to this program:
+You can replay a board by passing a .boggle file to this program:
 
     $ boggle -file past-game.boggle
 
@@ -39,6 +38,8 @@ The following options are available:
   -new
         use the "New" Boggle dice set (since 2008).
         See: https://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html
+  -save
+        save game results to a .boggle file
   -skip
         skip interactive game
   -solve

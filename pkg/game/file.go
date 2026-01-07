@@ -56,9 +56,12 @@ func LoadFile(path string) (f Frontmatter, words []string, err error) {
 
 type Frontmatter struct {
 	// Board, serialized; see [boggle.Deserialize].
-	Board         string
-	TimerSeconds  int
-	AboutThisFile string
+	Board               string
+	TimerSeconds        int
+	WordsFound          int
+	TotalAvailableWords int
+	Dictionary          string
+	AboutThisFile       string
 }
 
 //nolint:errcheck
