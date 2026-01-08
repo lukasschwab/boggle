@@ -17,8 +17,7 @@ const usage = `boggle - play an unsanctioned game of boggle.
 This game uses the Collins Scrabble Words 2019 dictionary, a three-minute timer,
 and requires words be at least four letters long.
 
-Each game outputs a .boggle file describing the board and your performance. You
-can replay a board by passing a .boggle file to this program:
+You can replay a board by passing a .boggle file to this program:
 
     $ boggle -file past-game.boggle
 
@@ -37,6 +36,7 @@ func main() {
 	var boardUrlFlag = flag.String("url", "", "web URL of a public .boggle file to configure game")
 	var solveFlag = flag.Bool("solve", false, "print all possible words on board after game")
 	var skipFlag = flag.Bool("skip", false, "skip interactive game")
+	var saveFlag = flag.Bool("save", false, "save game results to a .boggle file")
 	var newFlag = flag.Bool("new", false, "use the \"New\" Boggle dice set (since 2008).\nSee: https://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html")
 
 	flag.Usage = func() {
@@ -98,14 +98,19 @@ func main() {
 			log.Fatal(err.Error())
 		}
 
-		filename := fmt.Sprintf("./%s.boggle", time.Now().UTC().Format(time.RFC3339))
-		if err := game.WriteFile(filename, game.Frontmatter{
-			Board:        b.Serialize(),
-			TimerSeconds: 180,
-		}, words); err != nil {
-			log.Fatal(err.Error())
+		if *saveFlag {
+			filename := fmt.Sprintf("./%s.boggle", time.Now().UTC().Format(time.RFC3339))
+			if err := game.WriteFile(filename, game.Frontmatter{
+				Board:               b.Serialize(),
+				TimerSeconds:        180,
+				WordsFound:          len(words),
+				TotalAvailableWords: len(boardWordsDict.Members()),
+				Dictionary:          "Collins Scrabble Words 2019",
+			}, words); err != nil {
+				log.Fatal(err.Error())
+			}
+			log.Infof("Wrote %v", filename)
 		}
-		log.Infof("Wrote %v", filename)
 	}
 
 	if *solveFlag {
