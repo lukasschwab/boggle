@@ -18,15 +18,17 @@ func main() {
 	newPlayable := evaluate(sizePlayable, boggle.NewDice)
 
 	onlyClassic := filterExclusive(classicPlayable, newPlayable)
-	// fmt.Printf("Only classic-playable:\n %+v\n", onlyClassic)
+	onlyNew := filterExclusive(newPlayable, classicPlayable)
 
 	fucklike, _ := filterSlice(onlyClassic, func(word string) bool {
 		return strings.ContainsRune(word, 'f') && strings.ContainsRune(word, 'k')
 	})
-	fmt.Printf("%d/%d Classic-exclusive words contain 'f' and 'k'", fucklike.Size(), len(onlyClassic))
 
-	// onlyNew := filterExclusive(newPlayable, classicPlayable)
-	// fmt.Printf("Only new-playable:\n %+v\n", onlyNew)
+	fmt.Printf("Classic playable: %d\n", classicPlayable.Size())
+	fmt.Printf("New playable: %d\n", newPlayable.Size())
+	fmt.Printf("Only classic: %d\n", len(onlyClassic))
+	fmt.Printf("Only new: %d\n", len(onlyNew))
+	fmt.Printf("%d/%d Classic-exclusive words contain 'f' and 'k'\n", fucklike.Size(), len(onlyClassic))
 }
 
 func evaluate(sizePlayable dictionary.Map, dice [16]boggle.Die) dictionary.Map {

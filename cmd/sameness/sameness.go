@@ -41,7 +41,7 @@ func evaluate(dice [16]boggle.Die) (unique, common int) {
 	wordCounts := map[string]int{}
 
 	for _ = range GamesPerSession {
-		b := boggle.Shake(boggle.ClassicDice)
+		b := boggle.Shake(dice)
 		boardWordsDict := b.AllWords(dict)
 
 		for _, word := range boardWordsDict.Members() {

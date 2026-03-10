@@ -89,7 +89,7 @@ var (
 	newDie7  = newDie{"d", "e", "l", "r", "v", "y"}
 	newDie8  = newDie{"d", "i", "s", "t", "t", "y"}
 	newDie9  = newDie{"e", "e", "g", "h", "n", "w"}
-	newDie10 = newDie{"e", "e", "i", "n", "s", "v"}
+	newDie10 = newDie{"e", "e", "i", "n", "s", "u"}
 	newDie11 = newDie{"e", "h", "r", "t", "v", "w"}
 	newDie12 = newDie{"e", "i", "o", "s", "s", "t"}
 	newDie13 = newDie{"e", "l", "r", "t", "t", "y"}
