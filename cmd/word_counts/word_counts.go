@@ -19,7 +19,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	for _ = range 10_000 {
+	for range 10_000 {
 		b := boggle.Shake(boggle.ClassicDice)
 		boardWordsDict := b.AllWords(dict)
 		fmt.Println(boardWordsDict.Size())

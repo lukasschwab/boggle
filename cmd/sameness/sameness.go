@@ -17,7 +17,7 @@ const (
 func main() {
 	classicUniqueCounts := []string{}
 	newUniqueCounts := []string{}
-	for _ = range 1_000 {
+	for range 1_000 {
 		classicUnique, _ := evaluate(boggle.ClassicDice)
 		classicUniqueCounts = append(classicUniqueCounts, strconv.Itoa(classicUnique))
 		newUnique, _ := evaluate(boggle.NewDice)
@@ -40,16 +40,12 @@ func evaluate(dice [16]boggle.Die) (unique, common int) {
 
 	wordCounts := map[string]int{}
 
-	for _ = range GamesPerSession {
-		b := boggle.Shake(boggle.ClassicDice)
+	for range GamesPerSession {
+		b := boggle.Shake(dice)
 		boardWordsDict := b.AllWords(dict)
 
 		for _, word := range boardWordsDict.Members() {
-			if _, ok := wordCounts[word]; ok {
-				wordCounts[word]++
-			} else {
-				wordCounts[word] = 1
-			}
+			wordCounts[word]++
 		}
 	}
 
