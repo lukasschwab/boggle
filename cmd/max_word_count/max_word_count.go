@@ -20,7 +20,7 @@ func main() {
 	var bestBoard boggle.Board
 	var bestBoardCount = 0
 
-	for _ = range 100_000 {
+	for range 100_000 {
 		b := boggle.Shake(boggle.ClassicDice)
 		boardWordsDict := b.AllWords(dict)
 		// fmt.Println(boardWordsDict.Size())

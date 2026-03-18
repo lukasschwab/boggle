@@ -143,7 +143,7 @@ func Run(
 
 	finalModel := final.(model)
 	scoredWords := make([]string, 0, len(finalModel.scoredWords))
-	for word, _ := range finalModel.scoredWords {
+	for word := range finalModel.scoredWords {
 		scoredWords = append(scoredWords, word)
 	}
 	return scoredWords, nil

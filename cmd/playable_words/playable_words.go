@@ -10,7 +10,9 @@ import (
 
 func main() {
 	unfiltered := dictionary.Map{}
-	dictionary.Load(dictionary.CSW19, unfiltered)
+	if err := dictionary.Load(dictionary.CSW19, unfiltered); err != nil {
+		panic(err)
+	}
 
 	sizePlayable, _ := filter(unfiltered, boggle.Playable)
 	// fmt.Printf("Excluded for size: %v\n", sizeExcluded)
