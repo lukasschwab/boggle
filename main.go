@@ -6,7 +6,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/charmbracelet/log"
+	"charm.land/log/v2"
 	"github.com/lukasschwab/boggle/pkg/boggle"
 	"github.com/lukasschwab/boggle/pkg/dictionary"
 	"github.com/lukasschwab/boggle/pkg/game"

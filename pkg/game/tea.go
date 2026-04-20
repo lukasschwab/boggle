@@ -5,12 +5,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/charmbracelet/bubbles/help"
-	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/textinput"
-	"github.com/charmbracelet/bubbles/timer"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/bubbles/v2/help"
+	"charm.land/bubbles/v2/key"
+	"charm.land/bubbles/v2/textinput"
+	"charm.land/bubbles/v2/timer"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/lukasschwab/boggle/pkg/boggle"
 	"github.com/lukasschwab/boggle/pkg/dictionary"
 )
@@ -58,7 +58,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case timer.TimeoutMsg:
 		return m.quit()
 
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		switch {
 		case key.Matches(msg, m.keymap.quit):
 			return m.quit()
@@ -98,7 +98,7 @@ func (m model) handleSubmission() model {
 	return m
 }
 
-func (m model) View() string {
+func (m model) View() tea.View {
 	builder := new(strings.Builder)
 
 	scoreView := fmt.Sprintf("%d", len(m.scoredWords)) + m.style.blurredStyle.Render(fmt.Sprintf("/%d", m.totalWordCount))
@@ -118,7 +118,9 @@ func (m model) View() string {
 		builder.WriteString(m.helpView())
 	}
 
-	return builder.String()
+	v := tea.NewView(builder.String())
+	v.AltScreen = true
+	return v
 }
 
 func (m model) helpView() string {
@@ -156,8 +158,10 @@ func Model(
 	style Style,
 ) tea.Model {
 	ti := textinput.New()
-	ti.Focus()
-	ti.PromptStyle = style.promptStyle
+	ti.Focus() //nolint:errcheck
+	s := textinput.DefaultStyles(true)
+	s.Focused.Prompt = style.promptStyle
+	ti.SetStyles(s)
 
 	return model{
 		Dict:           dict,

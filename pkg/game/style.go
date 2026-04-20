@@ -3,13 +3,11 @@ package game
 import (
 	"time"
 
-	"github.com/charmbracelet/bubbles/timer"
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/bubbles/v2/timer"
+	"charm.land/lipgloss/v2"
 )
 
-var (
-	DefaultStyle = NewStyle(lipgloss.DefaultRenderer())
-)
+var DefaultStyle = NewStyle()
 
 type Style struct {
 	blurredStyle      lipgloss.Style
@@ -20,32 +18,32 @@ type Style struct {
 	timerStyle        func(t timer.Model) lipgloss.Style
 }
 
-func NewStyle(r *lipgloss.Renderer) Style {
+func NewStyle() Style {
 	return Style{
-		blurredStyle: r.NewStyle().
+		blurredStyle: lipgloss.NewStyle().
 			Foreground(lipgloss.Color("240")),
-		boardStyle: r.NewStyle().
+		boardStyle: lipgloss.NewStyle().
 			PaddingLeft(2).
-			BorderStyle(lipgloss.NormalBorder()).
+			Border(lipgloss.NormalBorder()).
 			BorderForeground(lipgloss.Color("63")).
 			MarginRight(2),
-		promptStyle: r.NewStyle().
+		promptStyle: lipgloss.NewStyle().
 			Foreground(lipgloss.Color("63")),
-		historyStyle: r.NewStyle().
+		historyStyle: lipgloss.NewStyle().
 			PaddingTop(1).PaddingBottom(1),
 		enteredWordStyles: map[entryOutcome]lipgloss.Style{
-			EntryRepeat: r.NewStyle().
+			EntryRepeat: lipgloss.NewStyle().
 				Foreground(lipgloss.Color("240")),
-			EntryScored: r.NewStyle().
+			EntryScored: lipgloss.NewStyle().
 				Foreground(lipgloss.ANSIColor(2)),
-			EntryInvalid: r.NewStyle().
+			EntryInvalid: lipgloss.NewStyle().
 				Foreground(lipgloss.ANSIColor(1)),
 		},
 		timerStyle: func(t timer.Model) lipgloss.Style {
 			if t.Timeout <= 15*time.Second {
-				return r.NewStyle().Foreground(lipgloss.ANSIColor(11))
+				return lipgloss.NewStyle().Foreground(lipgloss.ANSIColor(11))
 			}
-			return r.NewStyle().
+			return lipgloss.NewStyle().
 				Foreground(lipgloss.Color("240"))
 		},
 	}

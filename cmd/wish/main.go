@@ -9,13 +9,13 @@ import (
 	"syscall"
 	"time"
 
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/log"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/log/v2"
+	"charm.land/wish/v2"
+	"charm.land/wish/v2/activeterm"
+	"charm.land/wish/v2/bubbletea"
+	"charm.land/wish/v2/logging"
 	"github.com/charmbracelet/ssh"
-	"github.com/charmbracelet/wish"
-	"github.com/charmbracelet/wish/activeterm"
-	"github.com/charmbracelet/wish/bubbletea"
-	"github.com/charmbracelet/wish/logging"
 	"github.com/lukasschwab/boggle/pkg/boggle"
 	"github.com/lukasschwab/boggle/pkg/dictionary"
 	"github.com/lukasschwab/boggle/pkg/game"
@@ -94,8 +94,6 @@ func main() {
 }
 
 func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
-	style := game.NewStyle(bubbletea.MakeRenderer(s))
-
 	board := boggle.Shake(boggle.ClassicDice)
 	duration := 3 * time.Minute
 
@@ -111,5 +109,5 @@ func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 	// TODO: figure out how to output the game file. Probably means refactoring
 	// tea.go so the model optionally renders the file contents in view;
 	// basically, Run should become a pretty empty shell.
-	return game.Model(boardDict, board, duration, style), []tea.ProgramOption{}
+	return game.Model(boardDict, board, duration, game.DefaultStyle), bubbletea.MakeOptions(s)
 }
