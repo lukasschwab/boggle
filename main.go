@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
+	"os"
+	"runtime/debug"
 	"sort"
 	"time"
 
@@ -31,6 +34,7 @@ The following options are available:
 `
 
 func main() {
+	version := flag.Bool("version", false, "Display tool version info (JSON)")
 	var filenameFlag = flag.String("file", "", ".boggle file to configure game")
 	var boardFlag = flag.String("board", "", "serialized board string")
 	var boardUrlFlag = flag.String("url", "", "web URL of a public .boggle file to configure game")
@@ -44,6 +48,29 @@ func main() {
 		flag.PrintDefaults()
 	}
 	flag.Parse()
+
+	if *version {
+		info, ok := debug.ReadBuildInfo()
+		if !ok {
+			fmt.Println("Error reading build info")
+			os.Exit(1)
+		}
+		settings := make(map[string]string, len(info.Settings))
+		for _, pair := range info.Settings {
+			settings[pair.Key] = pair.Value
+		}
+		b, err := json.MarshalIndent(map[string]any{
+			"go":       info.GoVersion,
+			"path":     info.Path,
+			"settings": settings,
+		}, "", "\t")
+		if err != nil {
+			fmt.Printf("Error marshaling build info: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Println(string(b))
+		return
+	}
 
 	dice := boggle.ClassicDice
 	if *newFlag {
