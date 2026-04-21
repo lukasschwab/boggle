@@ -2,10 +2,14 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"flag"
+	"fmt"
 	"net"
 	"os"
 	"os/signal"
+	"runtime/debug"
 	"syscall"
 	"time"
 
@@ -27,6 +31,32 @@ const (
 )
 
 func main() {
+	version := flag.Bool("version", false, "Display tool version info (JSON)")
+	flag.Parse()
+
+	if *version {
+		info, ok := debug.ReadBuildInfo()
+		if !ok {
+			fmt.Println("Error reading build info")
+			os.Exit(1)
+		}
+		settings := make(map[string]string, len(info.Settings))
+		for _, pair := range info.Settings {
+			settings[pair.Key] = pair.Value
+		}
+		b, err := json.MarshalIndent(map[string]any{
+			"go":       info.GoVersion,
+			"path":     info.Path,
+			"settings": settings,
+		}, "", "\t")
+		if err != nil {
+			fmt.Printf("Error marshaling build info: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Println(string(b))
+		os.Exit(0)
+	}
+
 	// Key is coupled to fly.toml.
 	hostKeyPath, ok := os.LookupEnv("SSH_KEY_PATH")
 	if !ok {
